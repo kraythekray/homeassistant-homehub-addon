@@ -13,6 +13,13 @@ It sets itself up from what's already in your Home Assistant:
 
 ## Install
 
+[![Open your Home Assistant instance and show the add add-on repository dialog with this repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fkraythekray%2Fhomeassistant-homehub-addon)
+
+Click the button to add this repository to your Home Assistant. Then find **Home Hub** in the
+add-on store, install it, turn on **Show in sidebar**, and start it.
+
+Or add it by hand:
+
 1. In Home Assistant, go to **Settings → Add-ons → Add-on store**.
 2. Open the **⋮** menu, choose **Repositories**, and add:
    `https://github.com/kraythekray/homeassistant-homehub-addon`
