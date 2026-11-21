@@ -4,6 +4,8 @@ A family energy dashboard that runs as a Home Assistant add-on. It covers live p
 solar string timing, appliance health, habits, weather vs usage, a 7-day prediction, a plan
 to send back more power than you use, and alerts that are tracked over time.
 
+![Home Hub overview: live power flow, battery, today hour by hour and open alerts](docs/screenshots/overview.png)
+
 It sets itself up from what's already in your Home Assistant:
 
 - **Solar, battery and grid** come from your **Energy dashboard** settings.
@@ -27,6 +29,16 @@ Or add it by hand:
 
 The first start loads up to a year of history from Home Assistant's statistics. This takes about
 a minute.
+
+## Screenshots
+
+| | |
+|---|---|
+| **Solar & energy:** where every kWh went, and solar yield against sunshine<br>![Solar and energy](docs/screenshots/energy.png) | **Appliances:** health scores against each appliance's own normal<br>![Appliance health](docs/screenshots/appliances.png) |
+| **Habits:** when the house uses power, and the appliance clock<br>![Habits](docs/screenshots/habits.png) | **Weather & forecast:** a 7-day prediction, and temperature vs usage<br>![Weather and forecast](docs/screenshots/weather.png) |
+| **Savings plan:** steps to send back more than you use<br>![Savings plan](docs/screenshots/plan.png) | **Alerts:** raised automatically, tracked over time<br>![Alerts](docs/screenshots/alerts.png) |
+
+<p align="center"><img src="docs/screenshots/phone.png" width="300" alt="Home Hub on a phone"></p>
 
 ## Add-ons in this repository
 
