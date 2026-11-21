@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080B14">
+<title>Home Hub</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect width='34' height='34' rx='10' fill='%23111829'/%3E%3Cpath d='M8 18 17 10l9 8v8H8z' fill='none' stroke='%23FFC94D' stroke-width='2.4' stroke-linejoin='round'/%3E%3Ccircle cx='17' cy='20' r='2.8' fill='%23FFC94D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="static/app.css">
+<script src="static/vendor/echarts.min.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="rail" aria-label="Views">
+  <div class="logo">
+    <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#FFC94D"/><stop offset="1" stop-color="#FF7EB6"/></linearGradient></defs><rect width="34" height="34" rx="10" fill="#111829" stroke="#2A3757"/><path d="M8 18 17 10l9 8v8H8z" fill="none" stroke="url(#lg)" stroke-width="2" stroke-linejoin="round"/><circle cx="17" cy="20" r="2.6" fill="#FFC94D"/></svg>
+    <div><b>Home Hub</b><small id="loc-name">Home</small></div>
+  </div>
+  <a href="#overview" data-v="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11 12 4l9 7v9H3z"/><path d="M10 20v-5h4v5"/></svg>Home</a>
+  <a href="#energy" data-v="energy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Solar<span class="long">&nbsp;&amp; energy</span></span></a>
+  <a href="#appliances" data-v="appliances"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M5 9h14M9 6h.01M9 13v3"/></svg>Appliances</a>
+  <a href="#habits" data-v="habits"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Habits</a>
+  <a href="#weather" data-v="weather"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.6 1.5A3.3 3.3 0 0 0 7 18z"/></svg><span>Weather<span class="long">&nbsp;&amp; forecast</span></span></a>
+  <a href="#plan" data-v="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19h16M6 15l4-4 3 3 5-6"/><path d="M15 8h3v3"/></svg><span>Savings<span class="long">&nbsp;plan</span></span></a>
+  <a href="#alerts" data-v="alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg>Alerts<span class="badge" id="badge" hidden>0</span></a>
+  <div class="foot"><b><span class="live"></span><span id="conn">Connecting…</span></b><span id="conn-sub">Home Assistant</span></div>
+</nav>
+
+<main>
+<!-- =============== OVERVIEW =============== -->
+<section class="view" data-view="overview">
+  <div class="vhead"><div><div class="eyebrow" id="ov-date"></div><h1 id="ov-head">Loading your home…</h1></div></div>
+  <div class="hero">
+    <div class="card flowcard">
+      <div class="top">
+        <div class="eyebrow">Live power flow</div>
+        <div class="seg" role="group" aria-label="Flow snapshot">
+          <button type="button" aria-pressed="true" data-snap="now" id="snap-now">Now</button>
+          <button type="button" aria-pressed="false" data-snap="peak" id="snap-peak">Today's peak</button>
+        </div>
+      </div>
+      <div id="flow" role="img" aria-label="Animated power flow between solar, battery, grid and house"></div>
+    </div>
+    <div class="card" style="display:grid;gap:18px;align-content:start">
+      <div class="socwrap" id="soc-wrap">
+        <div id="soc" role="img" aria-label="Battery charge"></div>
+        <div class="kpi"><div class="eyebrow">Home battery</div><div class="v num" id="batt-kwh">–</div><div class="d" id="batt-d"></div></div>
+      </div>
+      <div class="kpis" id="kpis"></div>
+    </div>
+  </div>
+  <div class="bento">
+    <div class="card c8">
+      <div class="card-h"><div><h2>Today, hour by hour</h2><p>Real readings until now, predicted for the rest of the day</p></div>
+        <div class="legend"><span><i style="background:var(--solar)"></i>Solar</span><span><i style="background:var(--home)"></i>House use</span><span><i style="background:var(--export)"></i>Sold</span><span><i style="background:var(--grid)"></i>Bought</span></div></div>
+      <div class="ch" id="c-today"></div>
+    </div>
+    <div class="card c4">
+      <div class="card-h"><div><h2>Needs attention</h2><p id="al-mini-sub"></p></div><a class="btn" href="#alerts" style="text-decoration:none">All alerts</a></div>
+      <div class="alerts" id="al-mini"></div>
+    </div>
+    <div class="card c12">
+      <div class="card-h"><div><h2>Next 7 days</h2><p>Forecast solar and house use from the weather and your habits</p></div>
+        <div class="legend"><span><i style="background:var(--solar)"></i>Solar expected</span><span><i style="background:var(--home)"></i>Use expected</span></div></div>
+      <div class="days" id="days"></div>
+    </div>
+    <div class="card c8">
+      <div class="card-h"><div><h2>Lights and outside</h2><p>Found automatically from Home Assistant</p></div></div>
+      <div id="rooms"></div>
+    </div>
+    <div class="card c4">
+      <div class="card-h"><div><h2>Around the house</h2></div></div>
+      <div class="alerts" id="house"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== ENERGY =============== -->
+<section class="view" data-view="energy" hidden>
+  <div class="vhead"><div><div class="eyebrow">Solar &amp; energy</div><h1 id="en-head"></h1></div></div>
+  <div class="stat-row" id="e-stats"></div>
+  <div class="bento">
+    <div class="card c7">
+      <div class="card-h"><div><h2>Where the energy went, last 30 days</h2><p>Every kWh from solar and the grid, traced to where it ended up</p></div></div>
+      <div class="ch tall" id="c-sankey"></div>
+    </div>
+    <div class="card c5">
+      <div class="card-h"><div><h2>Solar yield per unit of sunshine</h2><p>kWh made per MJ/m² of sunlight. A summer dip of about 15–28% is normal.</p></div><span class="pill" id="yield-pill"></span></div>
+      <div class="ch tall" id="c-yield"></div>
+    </div>
+    <div class="card c12">
+      <div class="card-h"><div><h2>When the panels make useful power</h2><p id="str-sub">Average output of each string over the last 10 days, in 15-minute steps</p></div>
+        <div class="legend" id="str-legend"></div></div>
+      <div class="ch" id="c-strings"></div>
+      <div class="ins-grid" id="ramp-ins" style="margin-top:8px"></div>
+    </div>
+    <div class="card c7">
+      <div class="card-h"><div><h2>Productive window by month</h2><p>Average output (all strings) by hour. Brighter means more power.</p></div></div>
+      <div class="ch" id="c-window"></div>
+    </div>
+    <div class="card c5">
+      <div class="card-h"><div><h2>Daily ramp-up, last 10 days</h2><p id="ramp-sub">When each string first and last passes its useful-power line</p></div></div>
+      <div class="ch" id="c-ramps"></div>
+    </div>
+    <div class="card c12">
+      <div class="card-h"><div><h2>Self-powered days</h2><p>Share of each day's use covered by solar and battery</p></div></div>
+      <div class="ch short" id="c-cal"></div>
+    </div>
+    <div class="card c12">
+      <div class="card-h"><div><h2>A typical day, last 8 weeks</h2><p>Average kWh per hour</p></div>
+        <div class="legend"><span><i style="background:var(--solar)"></i>Solar</span><span><i style="background:var(--home)"></i>House use</span><span><i style="background:var(--grid)"></i>Bought</span><span><i style="background:var(--export)"></i>Sold</span></div></div>
+      <div class="ch" id="c-profile"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== APPLIANCES =============== -->
+<section class="view" data-view="appliances" hidden>
+  <div class="vhead"><div><div class="eyebrow" id="ap-eyebrow">Appliance health</div><h1 id="ap-head"></h1></div></div>
+  <div class="bento">
+    <div class="card c12">
+      <div class="card-h"><div><h2>Health scores</h2><p>Each appliance against its own normal. Select one to see its history.</p></div></div>
+      <div class="apps" id="apps"></div>
+    </div>
+    <div class="card c8">
+      <div class="card-h"><div><h2 id="ad-title"></h2><p id="ad-sub"></p></div><span class="pill" id="ad-pill"></span></div>
+      <div class="ch" id="c-appdetail"></div>
+    </div>
+    <div class="card c4">
+      <div class="card-h"><div><h2>Where the money goes</h2><p id="tree-sub">Last 8 weeks</p></div></div>
+      <div class="ch" id="c-tree"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== HABITS =============== -->
+<section class="view" data-view="habits" hidden>
+  <div class="vhead"><div><div class="eyebrow">Habits · last 8 weeks</div><h1 id="hb-head"></h1></div></div>
+  <div class="bento">
+    <div class="card c7">
+      <div class="card-h"><div><h2>When the house uses power</h2><p>Average kWh per hour, by weekday</p></div></div>
+      <div class="ch tall" id="c-heat"></div>
+    </div>
+    <div class="card c5">
+      <div class="card-h"><div><h2>Appliance clock</h2><p>When each appliance runs. The yellow arc is the solar window (09:00–15:00).</p></div></div>
+      <div class="ch tall" id="c-polar"></div>
+    </div>
+    <div class="card c12">
+      <div class="card-h"><div><h2>What we noticed</h2></div></div>
+      <div class="ins-grid" id="habit-ins"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== WEATHER =============== -->
+<section class="view" data-view="weather" hidden>
+  <div class="vhead"><div><div class="eyebrow">Weather vs usage</div><h1 id="wx-head"></h1></div></div>
+  <div class="bento">
+    <div class="card c12">
+      <div class="card-h"><div><h2>Predicted next 7 days</h2><p>Solar from the radiation forecast × your panels' current yield. Use from your weekday habits adjusted for temperature. Battery simulated hour by hour.</p></div>
+        <div class="legend"><span><i style="background:var(--solar)"></i>Solar</span><span><i style="background:var(--home)"></i>House use</span><span><i style="background:var(--grid)"></i>Bought</span></div></div>
+      <div class="ch" id="c-fc"></div>
+      <div class="ch xs" id="c-fc-t"></div>
+    </div>
+    <div class="card c6">
+      <div class="card-h"><div><h2>Temperature vs daily use</h2><p>Each dot is a day</p></div></div>
+      <div class="ch tall" id="c-sc-temp"></div>
+    </div>
+    <div class="card c6">
+      <div class="card-h"><div><h2>Sunshine vs solar made</h2><p>Each dot is a day, coloured by month</p></div></div>
+      <div class="ch tall" id="c-sc-rad"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== PLAN =============== -->
+<section class="view" data-view="plan" hidden>
+  <div class="vhead"><div><div class="eyebrow">Savings plan · goal: send back more than you use</div><h1 id="pl-head"></h1></div><span class="mockline">Simulated on your last 8 weeks, hour by hour</span></div>
+  <div class="card">
+    <div class="card-h"><div><h2>Progress to net positive</h2><p id="meter-sub">Pick actions below to see the effect</p></div><div class="big num" id="meter-v">0%</div></div>
+    <div class="meter"><i id="meter" style="width:0%"></i></div>
+  </div>
+  <div class="bento">
+    <div class="card c7">
+      <div class="card-h"><div><h2>Steps to net positive</h2><p>Net grid energy per month (bought minus sold) after each step</p></div></div>
+      <div class="ch tall" id="c-water"></div>
+    </div>
+    <div class="card c5">
+      <div class="card-h"><div><h2>Your bill with the plan</h2><p id="bill-sub">kWh per month</p></div>
+        <div class="legend"><span><i style="background:var(--grid)"></i>Bought</span><span><i style="background:var(--export)"></i>Sold</span></div></div>
+      <div class="ch tall" id="c-bill"></div>
+    </div>
+    <div class="card c12">
+      <div class="card-h"><div><h2>Actions</h2><p>Tick the ones you'd do. Each one was simulated on your real hourly data.</p></div></div>
+      <div class="actions" id="acts"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== ALERTS =============== -->
+<section class="view" data-view="alerts" hidden>
+  <div class="vhead"><div><div class="eyebrow">Alerts · raised automatically, tracked over time</div><h1 id="al-head"></h1></div></div>
+  <div class="bento">
+    <div class="card c12"><div class="alerts" id="al-full"></div></div>
+    <div class="card c8" id="batt-card">
+      <div class="card-h"><div><h2>Battery temperature, last 7 days</h2><p>Hourly average and peak. Lithium batteries age faster above 45 °C.</p></div></div>
+      <div class="ch" id="c-batt"></div>
+    </div>
+    <div class="card c4">
+      <div class="card-h"><div><h2>Alert history</h2><p>Raised per week</p></div></div>
+      <div class="ch" id="c-alhist"></div>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script src="static/app.js"></script>
+</body>
+</html>
